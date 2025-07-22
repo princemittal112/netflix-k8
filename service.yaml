@@ -5,10 +5,9 @@ metadata:
   labels:
     app: netflix-clone
 spec:
-  type: NodePort
+  type: LoadBlancer
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 31000
   selector:
     app: netflix-clone
