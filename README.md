@@ -130,5 +130,5 @@ Then open: `http://localhost:6060`
 
 <img width="1440" height="900" alt="Screenshot 2025-07-22 at 1 16 27 PM" src="https://github.com/user-attachments/assets/6d977198-d161-4a66-9127-12ce6a36190b" />
 
-![Uploading Screenshot 2025-07-22 at 1.16.30 PM.png…]()
+<img width="1440" height="900" alt="Screenshot 2025-07-22 at 1 16 30 PM" src="https://github.com/user-attachments/assets/359ad291-372c-4cc4-af40-763a1b907752" />
 
