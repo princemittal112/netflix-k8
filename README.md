@@ -132,3 +132,7 @@ Then open: `http://localhost:6060`
 
 <img width="1440" height="900" alt="Screenshot 2025-07-22 at 1 16 30 PM" src="https://github.com/user-attachments/assets/359ad291-372c-4cc4-af40-763a1b907752" />
 
+![WhatsApp Image 2025-07-23 at 19 26 42](https://github.com/user-attachments/assets/91f7dd99-317a-4d03-b0ce-2bcf44541bc5)
+
+![WhatsApp Image 2025-07-23 at 19 26 54](https://github.com/user-attachments/assets/fbaa2748-0233-4f0f-b636-10d6bb8e2884)
+
