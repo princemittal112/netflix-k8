@@ -1,76 +1,134 @@
+# Netflix Clone Deployment using Kubernetes, Podman, Jenkins & GitHub
 
-#  Web application deploy into Kubernetes cluster
+This project demonstrates the CI/CD deployment of a Netflix Clone application using Kubernetes (Kind), Podman, Jenkins, and GitHub on a macOS system. The pipeline automates image building, pushing, and deployment to a local Kubernetes cluster.
 
-Understanding Kubernetes:
+---
 
-Kubernetes, often abbreviated as K8s, is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications.
+## 🧰 Tech Stack Used
 
-It abstracts the underlying infrastructure and provides a unified API to manage clusters of containers effectively. With Kubernetes, developers can focus on building applications without worrying about the complexities of deployment and scaling.
+* **Podman** for containerization
+* **Kind** (Kubernetes in Docker) for a local Kubernetes cluster
+* **Jenkins** for CI/CD automation
+* **GitHub** for version control
+* **macOS** (Apple Silicon) as the local machine
 
-## Steps
-#### Step 1. Create ec2 instance and installations
-Use name as you preferd i used Netflix-server 
+---
 
-Type is (AMI- Ubuntu 22.04, Type- t2.medium)
-
-Install updates. (sudo apt-get update)
-
-Install Docker. [Docker installation doumentaion](https://docs.docker.com/engine/install/ubuntu/)
-
-Give permission to Docker (sudo usermod -aG docker $USER && newgrp docker)
-
-Minikube and Kubectl installation Install Docker. [Minikube installation doumentaion](https://www.linuxtechi.com/how-to-install-minikube-on-ubuntu/)
-
-`sudo docker --version`
-
-`sudo minikube version`
-
-`sudo Kubectl version`
-
-#### Step 1. Clone the repository to ec2
-```
-git clone https://github.com/NirmalNaveen20/netflix-k8.git
-```
-
-#### Step 2. Create a image and push to the docker hub
+## 📁 Project Structure
 
 ```
-sudo docker build -t nteflix-app .
+Netflix-Clone-K8s-Jenkins/
+├── Jenkinsfile
+├── Dockerfile
+├── deployment.yaml
+├── service.yaml
+├── .podman/
+│   └── netflix-clone:latest.tar
+└── src/
+    └── [Netflix Clone App Source Code]
 ```
 
-`sudo docker login`
+---
 
-Provide your docker hub credentials 
+## 🚀 Jenkins Pipeline 
 
-Push image to the docker hub
+### 📜 Jenkinsfile
 
-`sudo docker push <your docker hub username/netflix-app>`
+```groovy
+pipeline {
+  agent any
 
-#### Step 3. Create Deployment.yml and Service.yml files for Deployments
+  environment {
+    PODMAN = "/opt/homebrew/bin/podman"
+    TMDB_API_KEY = "5c8d658e9e63671c75cf66a8176ab391"
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: 'main', url: 'https://github.com/princemittal112/netflix-k8.git'
+      }
+    }
+
+    stage('Build Image') {
+      steps {
+        sh '/opt/homebrew/bin/podman build -t mittalprince2005/netflix-clone:latest --build-arg TMDB_API_KEY=5c8d658e9e63671c75cf66a8176ab391 .'
+      }
+    }
+
+    stage('Push Image') {
+      steps {
+        sh '/opt/homebrew/bin/podman push mittalprince2005/netflix-clone:latest'
+      }
+    }
+
+    stage('Deploy to Kubernetes') {
+      steps {
+        sh '/opt/homebrew/bin/kubectl apply -f deployment.yaml'
+        sh '/opt/homebrew/bin/kubectl apply -f service.yaml'
+      }
+    }
+
+    stage('Port Forward') {
+      steps {
+        sh 'nohup /opt/homebrew/bin/kubectl port-forward svc/netflix-clone 8082:80 &'
+      }
+    }
+
+    stage('Check Status') {
+      steps {
+        sh '/opt/homebrew/bin/kubectl get pods'
+        sh '/opt/homebrew/bin/kubectl get svc'
+      }
+    }
+  }
+
+  post {
+    success {
+      echo 'Netflix clone deployed successfully via Jenkins.'
+    }
+    failure {
+      echo 'Jenkins pipeline failed.'
+    }
+  }
+}
 ```
-sudo kubectl apply -f deployment.yml
+
+---
+
+## 📄 Kubernetes Files
+
+### `deployment.yaml`
+
+Defines the deployment of the Netflix app container.
+
+### `service.yaml`
+
+Exposes the deployment as a service.
+
+---
+
+## 🌐 Accessing the Application
+
+```bash
+kubectl port-forward svc/netflix-clone-service 6060:80
 ```
 
-```
-sudo kubectl apply -f service.yml
-```
+Then open: `http://localhost:6060`
 
-#### Step 4. Get the URL and curl it to check the website accessibility.
+---
 
-```
-sudo minikube service netflix-app --url 
-```
+## 📌 Notes
 
-check accessibility
+* Ensure the Jenkins agent has access to Podman and kubectl.
+* SSH issues must be resolved by configuring the correct key permissions and paths.
+* Kind must be running and reachable.
 
-`curl -L <minikube-address>`
+---
 
-Check with Public URL and we can now see the Netflix APP running on the server.
+## 📸 Screenshots (optional)
 
-## Author
+<img width="1440" height="900" alt="Screenshot 2025-07-22 at 1 16 27 PM" src="https://github.com/user-attachments/assets/6d977198-d161-4a66-9127-12ce6a36190b" />
 
-- [@Nirmal Naveen](https://www.nirmalnaveen.com/)
-
-![Logo](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlPjhPV6D68kBoBq82reUr6ndqcI_n9YPSQ9WA3sqT_RAXpDVcujzTO1MmWrcmcGYeyA&usqp=CAU)
-
+![Uploading Screenshot 2025-07-22 at 1.16.30 PM.png…]()
 
